@@ -1,39 +1,9 @@
 import React from 'react';
-import AppMinMax from './hw/5-norm.js';
-import ProductRemove from './hw/product-remove.js';
+import MinMaxInput from '../min-max-input';
 
 export default class extends React.Component {
     state = {
-        products: [
-            {
-                id: 100,
-                title: 'Ipnone 200',
-                price: 12000,
-                rest: 10,
-                current: 1
-            },
-            {
-                id: 101,
-                title: 'Samsung AAZ8',
-                price: 22000,
-                rest: 5,
-                current: 1
-            },
-            {
-                id: 103,
-                title: 'Nokia 3310',
-                price: 5000,
-                rest: 2,
-                current: 1
-            },
-            {
-                id: 105,
-                title: 'Huawei ZZ',
-                price: 15000,
-                rest: 8,
-                current: 1
-            }
-        ],
+        products: getProducts(),
         formDone: false
     }
 
@@ -70,13 +40,13 @@ export default class extends React.Component {
     }
 
     render() {
-        let productsRows = this.state.products.map((product, i) => {
+        const productsRows = this.state.products.map((product, i) => {
             return (
                 <tr key={product.id}>
                     <td>{product.title}</td>
                     <td>{product.price}</td>
                     <td>
-                        <AppMinMax min={1}
+                        <MinMaxInput min={1}
                             max={product.rest}
                             cnt={product.current}
                             onChange={(cnt) => this.changeCnt(i, cnt)}
@@ -84,7 +54,7 @@ export default class extends React.Component {
                     </td>
                     <td>{this.productSubtotal(product)}</td>
                     <td>
-                        <ProductRemove onClick={() => this.removeProduct(product.id)} />
+                        <button onClick={() => this.removeProduct(product.id)}>Remove</button>
                     </td>
                 </tr>
             );
@@ -99,40 +69,72 @@ export default class extends React.Component {
         return (
             <div>{renderLayout}</div>
         );
-
-        function renderCartLayout(productsRows, productsTotal, sendForm) {
-            return (
-                <div>
-                    <h2>Cart</h2>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Title</td>
-                                <td>Price</td>
-                                <td>Count</td>
-                                <td>Total</td>
-                            </tr>
-                            {productsRows}
-                        </tbody>
-                    </table>
-                    <div>
-                        <strong>Total: {productsTotal}</strong>
-                    </div>
-                    <div>
-                        <button onClick={sendForm}>Send</button>
-                    </div>
-                </div>
-            );
-        }
-
-        function renderCongratulationsLayout() {
-            return (
-                <div>
-                    <h2>Congratulations!</h2>
-                    <p>Your order has been recieved!</p>
-                </div>
-            );
-        }
     }
+}
 
+function renderCartLayout(productsRows, productsTotal, sendForm) {
+    return (
+        <div>
+            <h2>Cart</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Title</td>
+                        <td>Price</td>
+                        <td>Count</td>
+                        <td>Total</td>
+                    </tr>
+                    {productsRows}
+                </tbody>
+            </table>
+            <div>
+                <strong>Total: {productsTotal}</strong>
+            </div>
+            <div>
+                <button onClick={sendForm}>Send</button>
+            </div>
+        </div>
+    );
+}
+
+function renderCongratulationsLayout() {
+    return (
+        <div>
+            <h2>Congratulations!</h2>
+            <p>Your order has been recieved!</p>
+        </div>
+    );
+}
+
+function getProducts() {
+    return [
+        {
+            id: 100,
+            title: 'Ipnone 200',
+            price: 12000,
+            rest: 10,
+            current: 1
+        },
+        {
+            id: 101,
+            title: 'Samsung AAZ8',
+            price: 22000,
+            rest: 5,
+            current: 1
+        },
+        {
+            id: 103,
+            title: 'Nokia 3310',
+            price: 5000,
+            rest: 2,
+            current: 1
+        },
+        {
+            id: 105,
+            title: 'Huawei ZZ',
+            price: 15000,
+            rest: 8,
+            current: 1
+        }
+    ];
 }
