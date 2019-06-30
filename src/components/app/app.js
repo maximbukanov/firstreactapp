@@ -1,16 +1,20 @@
 import React from 'react';
-import MinMaxInput from '../min-max-input';
+import Cart from '../cart';
 
 export default class extends React.Component {
     state = {
         products: getProducts(),
-        formDone: false
+        personalData: getPersonalData(),
+        cartItemsProvided: false,
+        personalDataProvided: false,
+        orderDetailsConfirmed: false,
+        formDone: false,
     }
 
     //Обновляет state.products и устанавливает количество продуктов 
-    changeCnt(i, cnt) {
+    changeCnt(i, cnt, products) {
         // по смысле this.state.products[i].current = cnt;
-        let newProducts = [...this.state.products];
+        let newProducts = [...products];
         let newProduct = { ...newProducts[i] };
         newProduct.current = cnt;
         newProducts[i] = newProduct;
@@ -29,81 +33,80 @@ export default class extends React.Component {
         });
     }
 
-    //subtotal - подытог по каждому продукту
-    productSubtotal(product) {
-        return product.price * product.current;
+    //Обновляет state.personalData
+    setPersonalData() {
+        console.log('set personal data from the form');
     }
 
-    //обработчик клика по кнопке "отправить"
+    //шаг 1 - клиент набрал корзину
+    cartItemsProvided = () => {
+        this.setState({ cartItemsProvided: true });
+    }
+
+    //шаг 2 - клиент ввел свои данные
+    personalDataProvided = () => {
+        this.setState({ personalDataProvided: true });
+    }
+
+    //шаг 3 - клиент подтвердил корзину и введенные им данные
+    orderDetailsConfirmed = () => {
+        this.setState({ orderDetailsConfirmed: true });
+    }
+
+    //шаг 4 - отправить заказ и сообщить об этом клиенту
     sendForm = () => {
         this.setState({ formDone: true });
     }
 
-    render() {
-        const productsRows = this.state.products.map((product, i) => {
-            return (
-                <tr key={product.id}>
-                    <td>{product.title}</td>
-                    <td>{product.price}</td>
-                    <td>
-                        <MinMaxInput min={1}
-                            max={product.rest}
-                            cnt={product.current}
-                            onChange={(cnt) => this.changeCnt(i, cnt)}
-                        />
-                    </td>
-                    <td>{this.productSubtotal(product)}</td>
-                    <td>
-                        <button onClick={() => this.removeProduct(product.id)}>Remove</button>
-                    </td>
-                </tr>
+    getCurrentLayout = () => {
+        let result = null;
+        if (!this.state.cartItemsProvided) {
+            result = (
+                <div>
+                    <Cart
+                        products={this.state.products}
+                        // formDone={this.state.formDone}
+                        changeCnt={this.changeCnt.bind(this)}
+                        removeProduct={this.removeProduct.bind(this)}
+                        cartItemsProvided={this.cartItemsProvided.bind(this)}
+                    // setPersonalData={this.setPersonalData.bind(this)}
+                    // personalDataProvided={this.personalDataProvided.bind(this)}
+                    // orderDetailsConfirmed={this.orderDetailsConfirmed.bind(this)}
+                    // sendForm={this.sendForm.bind(this)}
+                    />
+                </div>
             );
-        });
+        } else if (!this.state.personalDataProvided) {
+            result = (
+                <div>
+                    <h1>Personal data is not provided</h1>
+                </div>
+            );
+        } else if (!this.state.orderDetailsConfirmed) {
+            result = (
+                <div>
+                    <h1>Confirm your order details!</h1>
+                </div>
+            );
+        } else if (!this.state.formDone) {
+            result = (
+                <div>
+                    <h2>Congratulations!</h2>
+                    <p>Your order has been recieved!</p>
+                </div>
+            );
+        }
+        return result;
+    }
 
-        const productsTotal = this.state.products.reduce((sum, product) => {
-            return sum + this.productSubtotal(product);
-        }, 0);
-
-        const renderLayout = !this.state.formDone ? renderCartLayout(productsRows, productsTotal, this.sendForm) : renderCongratulationsLayout();
-
+    render() {
+        const currentLayout = this.getCurrentLayout();
         return (
-            <div>{renderLayout}</div>
+            <div>
+                {currentLayout}
+            </div>
         );
     }
-}
-
-function renderCartLayout(productsRows, productsTotal, sendForm) {
-    return (
-        <div>
-            <h2>Cart</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>Title</td>
-                        <td>Price</td>
-                        <td>Count</td>
-                        <td>Total</td>
-                    </tr>
-                    {productsRows}
-                </tbody>
-            </table>
-            <div>
-                <strong>Total: {productsTotal}</strong>
-            </div>
-            <div>
-                <button onClick={sendForm}>Send</button>
-            </div>
-        </div>
-    );
-}
-
-function renderCongratulationsLayout() {
-    return (
-        <div>
-            <h2>Congratulations!</h2>
-            <p>Your order has been recieved!</p>
-        </div>
-    );
 }
 
 function getProducts() {
@@ -137,4 +140,12 @@ function getProducts() {
             current: 1
         }
     ];
+}
+
+function getPersonalData() {
+    return {
+        name: '',
+        email: '',
+        phone: ''
+    }
 }
