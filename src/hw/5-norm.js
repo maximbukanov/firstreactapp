@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppInput from './app-input';
 
 export default class extends React.Component {
     static defaultProps = {
