@@ -34,7 +34,7 @@ export default class extends React.Component {
                 current: 1
             }
         ],
-        productsTotal: 0
+        formDone: false
     }
 
     //Обновляет state.products и устанавливает количество продуктов 
@@ -44,15 +44,11 @@ export default class extends React.Component {
         let newProduct = { ...newProducts[i] };
         newProduct.current = cnt;
         newProducts[i] = newProduct;
-        //В callback для setState вызываем пересчет state.productsTotal
-        this.setState({ products: newProducts }, () => {
-            this.productsTotal();
-        });
+        this.setState({ products: newProducts });
     }
 
     //Обновляет state.products и удаляет продукт по его id
     removeProduct(id) {
-        //В callback для setState вызываем пересчет state.productsTotal
         this.setState(({ products }) => {
             const idx = products.findIndex((el) => el.id === id);
             //нельзя изменять существующий state, поэтому нужно создать shallow-копию массива и передать ее в setState
@@ -60,14 +56,7 @@ export default class extends React.Component {
             return {
                 products: newArray
             };
-        }, () => {
-            this.productsTotal();
         });
-    }
-
-    //Выполняется сразу, как компонент монтируется и направляется в DOM
-    componentDidMount() {
-        this.productsTotal();
     }
 
     //subtotal - подытог по каждому продукту
@@ -75,14 +64,9 @@ export default class extends React.Component {
         return product.price * product.current;
     }
 
-    //productsTotal - редьюсер, number с которого устанавливает итог по всей корзине (начальное состояние = 0)
-    productsTotal() {
-        this.setState(({ products }) => {
-            const productsTotal = products.reduce((sum, product) => {
-                return sum + this.productSubtotal(product);
-            }, 0);
-            return { productsTotal }
-        });
+    //обработчик клика по кнопке "отправить"
+    sendForm = () => {
+        this.setState({ formDone: true });
     }
 
     render() {
@@ -106,24 +90,49 @@ export default class extends React.Component {
             );
         });
 
+        const productsTotal = this.state.products.reduce((sum, product) => {
+            return sum + this.productSubtotal(product);
+        }, 0);
+
+        const renderLayout = !this.state.formDone ? renderCartLayout(productsRows, productsTotal, this.sendForm) : renderCongratulationsLayout();
+
         return (
-            <div>
-                <h2>Cart</h2>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Title</td>
-                            <td>Price</td>
-                            <td>Count</td>
-                            <td>Total</td>
-                        </tr>
-                        {productsRows}
-                    </tbody>
-                </table>
-                <div>
-                    <strong>Total: {this.state.productsTotal}</strong>
-                </div>
-            </div>
+            <div>{renderLayout}</div>
         );
+
+        function renderCartLayout(productsRows, productsTotal, sendForm) {
+            return (
+                <div>
+                    <h2>Cart</h2>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Title</td>
+                                <td>Price</td>
+                                <td>Count</td>
+                                <td>Total</td>
+                            </tr>
+                            {productsRows}
+                        </tbody>
+                    </table>
+                    <div>
+                        <strong>Total: {productsTotal}</strong>
+                    </div>
+                    <div>
+                        <button onClick={sendForm}>Send</button>
+                    </div>
+                </div>
+            );
+        }
+
+        function renderCongratulationsLayout() {
+            return (
+                <div>
+                    <h2>Congratulations!</h2>
+                    <p>Your order has been recieved!</p>
+                </div>
+            );
+        }
     }
+
 }
