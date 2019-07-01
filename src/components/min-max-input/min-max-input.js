@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import LazyInput from '../lazy-input';
+import styles from './min-max-input.module.css';
 
 export default class extends Component {
     //Принимает onChange от родителя
@@ -37,14 +38,18 @@ export default class extends Component {
 
     render() {
         return (
-            <div>
-                <button onClick={this.decrease}>-</button>
+            <div className="input-group">
+                <span className="input-group-btn">
+                    <button className={"btn btn-danger " + styles.btnLeft} onClick={this.decrease}>-</button>
+                </span>
                 <LazyInput
-                    nativeProps={{ type: 'text' }}
+                    nativeProps={{ type: 'text', className: 'form-control' }}
                     value={this.props.cnt}
                     onChange={this.onChange}
                 />
-                <button onClick={this.increase}>+</button>
+                <span className="input-group-btn">
+                    <button className={"btn btn-success " + styles.btnRight} onClick={this.increase}>+</button>
+                </span>
             </div>
         );
     }

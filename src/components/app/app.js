@@ -1,5 +1,7 @@
 import React from 'react';
 import Cart from '../cart';
+import OrderForm from '../order-form';
+import ResultScreen from '../result-screen';
 
 export default class extends React.Component {
     state = {
@@ -7,14 +9,13 @@ export default class extends React.Component {
         personalData: getPersonalData(),
         cartItemsProvided: false,
         personalDataProvided: false,
-        orderDetailsConfirmed: false,
-        formDone: false,
+        orderDetailsConfirmed: false
     }
 
     //Обновляет state.products и устанавливает количество продуктов 
-    changeCnt(i, cnt, products) {
+    changeCnt(i, cnt) {
         // по смысле this.state.products[i].current = cnt;
-        let newProducts = [...products];
+        let newProducts = [...this.state.products];
         let newProduct = { ...newProducts[i] };
         newProduct.current = cnt;
         newProducts[i] = newProduct;
@@ -34,30 +35,30 @@ export default class extends React.Component {
     }
 
     //Обновляет state.personalData
-    setPersonalData() {
-        console.log('set personal data from the form');
+    applyPersonalData(value, key) {
+        let newPersonalData = { ...this.state.personalData };
+        newPersonalData[key] = value;
+        this.setState({ personalData: newPersonalData });
     }
 
-    //шаг 1 - клиент набрал корзину
-    cartItemsProvided = () => {
-        this.setState({ cartItemsProvided: true });
+    //шаг 1 - клиент набрал корзину товаров
+    setCartItemsProvided = (value) => {
+        this.setState({ cartItemsProvided: value });
     }
 
     //шаг 2 - клиент ввел свои данные
-    personalDataProvided = () => {
-        this.setState({ personalDataProvided: true });
+    setPersonalDataProvided = (value) => {
+        this.setState({ personalDataProvided: value });
     }
 
     //шаг 3 - клиент подтвердил корзину и введенные им данные
-    orderDetailsConfirmed = () => {
-        this.setState({ orderDetailsConfirmed: true });
+    setOrderDetailsConfirmed = (value) => {
+        this.setState({ orderDetailsConfirmed: value });
     }
 
-    //шаг 4 - отправить заказ и сообщить об этом клиенту
-    sendForm = () => {
-        this.setState({ formDone: true });
-    }
-
+    //Наверно, рендер тут можно представить по другому
+    //Либо подключить хранилище и роутер, чтобы не было такой дичи с передачей стейтов и сеттеров
+    //Также, можно было бы сделать расчет текущего шага не из нескольких стейтов, а из одного
     getCurrentLayout = () => {
         let result = null;
         if (!this.state.cartItemsProvided) {
@@ -65,34 +66,31 @@ export default class extends React.Component {
                 <div>
                     <Cart
                         products={this.state.products}
-                        // formDone={this.state.formDone}
                         changeCnt={this.changeCnt.bind(this)}
                         removeProduct={this.removeProduct.bind(this)}
-                        cartItemsProvided={this.cartItemsProvided.bind(this)}
-                    // setPersonalData={this.setPersonalData.bind(this)}
-                    // personalDataProvided={this.personalDataProvided.bind(this)}
-                    // orderDetailsConfirmed={this.orderDetailsConfirmed.bind(this)}
-                    // sendForm={this.sendForm.bind(this)}
+                        setCartItemsProvided={this.setCartItemsProvided.bind(this)}
                     />
                 </div>
             );
-        } else if (!this.state.personalDataProvided) {
+        } else if (!this.state.personalDataProvided || !this.state.orderDetailsConfirmed) {
             result = (
                 <div>
-                    <h1>Personal data is not provided</h1>
+                    <OrderForm
+                        products={this.state.products}
+                        personalData={this.state.personalData}
+                        applyPersonalData={this.applyPersonalData.bind(this)}
+                        personalDataProvided={this.state.personalDataProvided}
+                        orderDetailsConfirmed={this.state.orderDetailsConfirmed}
+                        setPersonalDataProvided={this.setPersonalDataProvided.bind(this)}
+                        setOrderDetailsConfirmed={this.setOrderDetailsConfirmed.bind(this)}
+                        setCartItemsProvided={this.setCartItemsProvided.bind(this)}
+                    />
                 </div>
             );
-        } else if (!this.state.orderDetailsConfirmed) {
+        } else if (this.state.personalDataProvided && this.state.orderDetailsConfirmed) {
             result = (
                 <div>
-                    <h1>Confirm your order details!</h1>
-                </div>
-            );
-        } else if (!this.state.formDone) {
-            result = (
-                <div>
-                    <h2>Congratulations!</h2>
-                    <p>Your order has been recieved!</p>
+                    <ResultScreen />
                 </div>
             );
         }

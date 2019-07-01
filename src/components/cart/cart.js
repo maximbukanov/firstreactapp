@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import MinMaxInput from '../min-max-input';
+import styles from './cart.module.css';
+import { countProductSubtotal, countProductsTotal } from '../../functions';
 
 export default class extends Component {
     render() {
@@ -7,9 +9,7 @@ export default class extends Component {
             products,
             changeCnt,
             removeProduct,
-            cartItemsProvided,
-            sendForm,
-            formDone
+            setCartItemsProvided
         } = this.props;
 
         const productsRows = products.map((product, i) => {
@@ -21,89 +21,42 @@ export default class extends Component {
                         <MinMaxInput min={1}
                             max={product.rest}
                             cnt={product.current}
-                            onChange={(cnt) => changeCnt(i, cnt, products)}
+                            onChange={(cnt) => changeCnt(i, cnt)}
                         />
                     </td>
-                    <td>{productSubtotal(product)}</td>
+                    <td>{countProductSubtotal(product)}</td>
                     <td>
-                        <button onClick={() => removeProduct(product.id)}>Remove</button>
+                        <button className="btn btn-secondary" onClick={() => removeProduct(product.id)}>Remove</button>
                     </td>
                 </tr>
             );
         });
 
-        const productsTotal = products.reduce((sum, product) => {
-            return sum + productSubtotal(product);
-        }, 0);
-
-        // const renderLayout = !formDone ?
-        //     renderCartLayout(productsRows, productsTotal, sendForm) :
-        //     renderCongratulationsLayout();
-
-        // return (
-        //     <div>{renderLayout}</div>
-        // );
+        const productsTotal = countProductsTotal(products);
 
         return (
             <div>
-                <h2>Cart</h2>
-                <table>
-                    <tbody>
+                <h1>Cart</h1>
+                <table className="table table-bordered">
+                    <thead>
                         <tr>
                             <td>Title</td>
                             <td>Price</td>
                             <td>Count</td>
                             <td>Total</td>
                         </tr>
+                    </thead>
+                    <tbody>
                         {productsRows}
                     </tbody>
                 </table>
                 <div>
-                    <strong>Total: {productsTotal}</strong>
+                    <strong className={styles.total}>Total: {productsTotal}</strong>
                 </div>
                 <div>
-                    <button onClick={cartItemsProvided}>Send</button>
+                    <button className="btn btn-primary" onClick={() => setCartItemsProvided(true)}>Next</button>
                 </div>
             </div>
         );
     }
-}
-
-// function renderCartLayout(productsRows, productsTotal, sendForm) {
-//     return (
-//         <div>
-//             <h2>Cart</h2>
-//             <table>
-//                 <tbody>
-//                     <tr>
-//                         <td>Title</td>
-//                         <td>Price</td>
-//                         <td>Count</td>
-//                         <td>Total</td>
-//                     </tr>
-//                     {productsRows}
-//                 </tbody>
-//             </table>
-//             <div>
-//                 <strong>Total: {productsTotal}</strong>
-//             </div>
-//             <div>
-//                 <button onClick={sendForm}>Send</button>
-//             </div>
-//         </div>
-//     );
-// }
-
-// function renderCongratulationsLayout() {
-//     return (
-//         <div>
-//             <h2>Congratulations!</h2>
-//             <p>Your order has been recieved!</p>
-//         </div>
-//     );
-// }
-
-//subtotal - подытог по каждому продукту
-function productSubtotal(product) {
-    return product.price * product.current;
 }
