@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styles from './result-screen.module.css';
 
 export default class extends Component {
     render() {
