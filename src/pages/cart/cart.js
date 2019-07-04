@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
-import MinMaxInput from '../min-max-input';
+import MinMaxInput from '~c/min-max-input';
 import styles from './cart.module.css';
-import { countProductSubtotal, countProductsTotal } from '../../functions';
+import { observer } from 'mobx-react';
+import router from '~s/router';
+import CartModel from '~s/cart';
 
-export default class extends Component {
+@observer class Cart extends Component {
     render() {
-        const {
-            products,
-            changeCnt,
-            removeProduct,
-            setCartItemsProvided
-        } = this.props;
-
-        const productsRows = products.map((product, i) => {
+        const productsRows = CartModel.products.map((product, i) => {
             return (
                 <tr key={product.id}>
                     <td>{product.title}</td>
@@ -21,18 +16,16 @@ export default class extends Component {
                         <MinMaxInput min={1}
                             max={product.rest}
                             cnt={product.current}
-                            onChange={(cnt) => changeCnt(i, cnt)}
+                            onChange={(cnt) => CartModel.change(i, cnt)}
                         />
                     </td>
-                    <td>{countProductSubtotal(product)}</td>
+                    <td>{CartModel.countProductSubtotal(product)}</td>
                     <td>
-                        <button className="btn btn-secondary" onClick={() => removeProduct(product.id)}>Remove</button>
+                        <button className="btn btn-secondary" onClick={() => CartModel.remove(i)}>Remove</button>
                     </td>
                 </tr>
             );
         });
-
-        const productsTotal = countProductsTotal(products);
 
         return (
             <div>
@@ -41,9 +34,9 @@ export default class extends Component {
                     <thead>
                         <tr>
                             <td>Title</td>
-                            <td>Price</td>
+                            <td>Price ($)</td>
                             <td>Count</td>
-                            <td>Total</td>
+                            <td>Total ($)</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,12 +44,14 @@ export default class extends Component {
                     </tbody>
                 </table>
                 <div>
-                    <strong className={styles.total}>Total: {productsTotal}</strong>
+                    <strong className={styles.total}>Total: {CartModel.total}$</strong>
                 </div>
                 <div>
-                    <button className="btn btn-primary" onClick={() => setCartItemsProvided(true)}>Next</button>
+                    <button className="btn btn-primary" onClick={() => router.moveTo('order')}>Next</button>
                 </div>
             </div>
         );
     }
 }
+
+export default Cart;

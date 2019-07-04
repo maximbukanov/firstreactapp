@@ -18,6 +18,10 @@ export default class extends Component {
     //Задаем прямую ссылку на DOM-элемент, чтобы исключить частый вызов componentDidUpdate
     nativeInput = React.createRef();
 
+    setValue(value) {
+        this.nativeInput.current.value = value;
+    }
+
     componentDidUpdate(prevProps, prevState) {
         let inp = this.nativeInput.current;
 

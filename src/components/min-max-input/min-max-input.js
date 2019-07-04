@@ -17,6 +17,8 @@ export default class extends Component {
         onChange: PropTypes.func
     }
 
+    lazyInput = React.createRef();
+
     increase = () => {
         this.set(this.props.cnt + 1);
     }
@@ -29,11 +31,15 @@ export default class extends Component {
     set(newCnt) {
         let cnt = Math.min(Math.max(newCnt, this.props.min), this.props.max);
         this.props.onChange(cnt);
+        return cnt;
     }
 
     onChange = (e) => {
         let cnt = parseInt(e.target.value);
-        this.set(isNaN(cnt) ? this.props.min : cnt);
+        let realCnt = this.set(isNaN(cnt) ? this.props.min : cnt);
+        if (realCnt.toString() !== e.target.value) {
+            this.lazyInput.current.setValue(realCnt);
+        }
     }
 
     render() {
@@ -46,6 +52,7 @@ export default class extends Component {
                     nativeProps={{ type: 'text', className: 'form-control' }}
                     value={this.props.cnt}
                     onChange={this.onChange}
+                    ref={this.lazyInput}
                 />
                 <span className="input-group-btn">
                     <button className={"btn btn-success " + styles.btnRight} onClick={this.increase}>+</button>

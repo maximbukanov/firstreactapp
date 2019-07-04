@@ -24,7 +24,8 @@ let conf = {
                         presets: ['@babel/preset-env'],
                         plugins: [
                             '@babel/plugin-transform-react-jsx',
-                            '@babel/plugin-proposal-class-properties'
+                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                            ["@babel/plugin-proposal-class-properties", { "loose": true }]
                         ]
                     }
                 }
@@ -63,6 +64,14 @@ let conf = {
                 ]
             }
         ]
+    },
+    resolve: {
+        alias: {
+            '~': path.resolve(__dirname, 'src'),
+            '~c': path.resolve(__dirname, 'src/components'),
+            '~p': path.resolve(__dirname, 'src/pages'),
+            '~s': path.resolve(__dirname, 'src/store'),
+        }
     }
 };
 
