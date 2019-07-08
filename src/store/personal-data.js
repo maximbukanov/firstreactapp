@@ -23,13 +23,11 @@ class PersonalData {
     }
 }
 
-export default new PersonalData();
-
 function getPersonalData() {
     return {
         name: {
             label: 'Name',
-            value: 'Max',
+            value: '',
             type: 'text',
             pattern: null,
             hasErrors: false,
@@ -53,3 +51,5 @@ function getPersonalData() {
         }
     }
 }
+
+export default PersonalData;

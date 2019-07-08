@@ -1,27 +1,30 @@
 import React, { Component } from 'react';
 import MinMaxInput from '~c/min-max-input';
 import styles from './cart.module.css';
-import { observer } from 'mobx-react';
-import router from '~s/router';
-import CartModel from '~s/cart';
+import { observer, inject } from 'mobx-react';
+import { routesMap } from '~/routes';
+import { Link } from 'react-router-dom';
 
+@inject('RootStore')
 @observer class Cart extends Component {
     render() {
-        const productsRows = CartModel.products.map((product, i) => {
+        const productsRows = this.props.RootStore.cartModel.products.map((product, i) => {
             return (
-                <tr key={product.id}>
-                    <td>{product.title}</td>
-                    <td>{product.price}</td>
+                <tr key={product.item.id}>
+                    <td>{product.item.title}</td>
+                    <td>{product.item.price}</td>
                     <td>
                         <MinMaxInput min={1}
-                            max={product.rest}
+                            max={product.item.rest}
                             cnt={product.current}
-                            onChange={(cnt) => CartModel.change(i, cnt)}
+                            onChange={this.props.RootStore.cartModel.changeOn[i]}
                         />
                     </td>
-                    <td>{CartModel.countProductSubtotal(product)}</td>
+                    <td>{this.props.RootStore.cartModel.countProductSubtotal(product)}</td>
                     <td>
-                        <button className="btn btn-secondary" onClick={() => CartModel.remove(i)}>Remove</button>
+                        <button className="btn btn-secondary" onClick={() => this.props.RootStore.cartModel.remove(product.item.id)}>
+                            Remove
+                        </button>
                     </td>
                 </tr>
             );
@@ -44,11 +47,11 @@ import CartModel from '~s/cart';
                     </tbody>
                 </table>
                 <div>
-                    <strong className={styles.total}>Total: {CartModel.total}$</strong>
+                    <strong className={styles.total}>Total: {this.props.RootStore.cartModel.total}$</strong>
                 </div>
-                <div>
-                    <button className="btn btn-primary" onClick={() => router.moveTo('order')}>Next</button>
-                </div>
+                <Link to={routesMap.order} className="btn btn-primary">
+                    Send
+                </Link>
             </div>
         );
     }

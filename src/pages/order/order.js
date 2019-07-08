@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import LazyInput from '~c/lazy-input';
-import OrderModel from '~s/personal-data';
-import CartModel from '~s/cart';
-import router from '~s/router';
+import { routesMap } from '~/routes';
+import { Link } from 'react-router-dom';
 
+@inject('RootStore')
 @observer class Order extends Component {
     state = {
         showModal: false
@@ -21,14 +21,14 @@ import router from '~s/router';
 
     confirm = () => {
         this.hide();
-        router.moveTo('result');
+        this.props.history.push(routesMap.result);
     }
 
     render() {
         const formFields = [];
 
-        for (let name in OrderModel.personalData) {
-            const field = OrderModel.personalData[name];
+        for (let name in this.props.RootStore.personalDataModel.personalData) {
+            const field = this.props.RootStore.personalDataModel.personalData[name];
 
             formFields.push(
                 <Form.Group key={name} controlId={'order-form-' + name}>
@@ -36,16 +36,16 @@ import router from '~s/router';
                     <LazyInput
                         nativeProps={{ type: field.type, className: 'form-control' }}
                         value={field.value}
-                        onChange={(e) => OrderModel.change(name, e.target.value)} />
+                        onChange={(e) => this.props.RootStore.personalDataModel.change(name, e.target.value)} />
                     {field.hasErrors ? <div className={"alert alert-danger mt-2"}>{field.testRegexpError}</div> : ''}
                 </Form.Group>
             );
         }
 
-        const productsList = CartModel.products.map(({ ...item }) => {
+        const productsList = this.props.RootStore.cartModel.products.map(({ ...product }) => {
             return (
-                <li key={item.id}>
-                    {item.title} (count: {item.current}): <strong>{CartModel.countProductSubtotal({ ...item })}$</strong>
+                <li key={product.item.id}>
+                    {product.item.title} (count: {product.current}): <strong>{this.props.RootStore.cartModel.countProductSubtotal({ ...product })}$</strong>
                 </li>
             );
         });
@@ -57,11 +57,11 @@ import router from '~s/router';
                 <Form>
                     {formFields}
                 </Form>
-                <Button variant="secondary" onClick={() => router.moveTo('cart')}>
+                <Link to={routesMap.cart} className="btn btn-secondary">
                     Back
-                </Button>
+                </Link>
                 &nbsp;
-                <Button variant="primary" onClick={() => this.show()} disabled={OrderModel.personalDataIsInvalid}>
+                <Button variant="primary" onClick={() => this.show()} disabled={this.props.RootStore.personalDataModel.personalDataIsInvalid}>
                     Order
                 </Button>
                 <Modal show={this.state.showModal} backdrop="static">
@@ -74,7 +74,7 @@ import router from '~s/router';
                                 {productsList}
                             </ul>
                         </div>
-                        <h2>Total: {CartModel.total}$</h2>
+                        <h2>Total: {this.props.RootStore.cartModel.total}$</h2>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.hide}>

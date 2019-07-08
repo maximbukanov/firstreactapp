@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import router from '~s/router';
+import { routesMap } from '~/routes';
+import { Link } from 'react-router-dom';
 
 @observer class NotFound extends Component {
     render() {
         return (
             <div>
                 <h1>Page not found!</h1>
-                <button className="btn btn-primary" onClick={() => router.moveTo('cart')}>Back to cart</button>
+                <Link to={routesMap.home} className="btn btn-primary">
+                    Back to cart
+                </Link>
             </div>
         );
     }

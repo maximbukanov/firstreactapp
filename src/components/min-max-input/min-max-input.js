@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import LazyInput from '../lazy-input';
 import styles from './min-max-input.module.css';
 
-export default class extends Component {
+//Deep equal и shallow equal
+//Проверка по вложенным и верхним ключам при повторном рендере
+export default class MinMaxInput extends PureComponent {
     //Принимает onChange от родителя
     static defaultProps = {
         onChange: function (cnt) { }

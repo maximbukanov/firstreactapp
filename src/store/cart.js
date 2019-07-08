@@ -1,57 +1,57 @@
-//Теперь эта модель данных не связана с реактом
 import { observable, computed, action } from 'mobx';
 
+// Свойства товара со склада shop проксируются в свойство CartItem.item
+// На страницах корзины и заказа имеем это в виду
+class CartItem {
+    item
+    @observable current = 0
+    constructor(item) {
+        this.item = item;
+    }
+}
+
 class Cart {
-    @observable products = getProducts()
+    constructor(rootStore) {
+        this.rootStore = rootStore
+    }
+
+    @observable products = [];
 
     @computed get total() {
-        return this.products.reduce((t, pr) => t + pr.price * pr.current, 0);
+        return this.products.reduce((t, pr) => t + pr.item.price * pr.current, 0);
+    }
+
+    @action findProduct(item) {
+        return this.products.find(product => product.item === item);
+    }
+
+    @action add(item, cnt = 1) {
+        let product = this.findProduct(item);
+        if (!product) {
+            product = new CartItem(item);
+            this.products.push(product);
+        }
+        product.current += cnt;
     }
 
     @action change(i, cnt) {
         this.products[i].current = cnt;
     }
 
+    @computed get changeOn() {
+        return this.products.map((product, i) => {
+            return (cnt) => this.change(i, cnt);
+        });
+    }
+
     @action countProductSubtotal(product) {
-        return product.price * product.current;
+        return product.item.price * product.current;
     }
 
-    @action remove(i) {
-        this.products.splice(i, 1);
+    @action remove(id) {
+        const idx = this.products.findIndex(product => { return product.item.id == id })
+        this.products = [...this.products.splice(0, idx), ...this.products.splice(idx + 1)];
     }
 }
 
-export default new Cart();
-
-function getProducts() {
-    return [
-        {
-            id: 100,
-            title: 'Ipnone 200',
-            price: 12000,
-            rest: 10,
-            current: 1
-        },
-        {
-            id: 101,
-            title: 'Samsung AAZ8',
-            price: 22000,
-            rest: 5,
-            current: 1
-        },
-        {
-            id: 103,
-            title: 'Nokia 3310',
-            price: 5000,
-            rest: 2,
-            current: 1
-        },
-        {
-            id: 105,
-            title: 'Huawei ZZ',
-            price: 15000,
-            rest: 8,
-            current: 1
-        }
-    ];
-}
+export default Cart;
