@@ -1,15 +1,5 @@
 import { observable, computed, action } from 'mobx';
 
-// Свойства товара со склада shop проксируются в свойство CartItem.item
-// На страницах корзины и заказа имеем это в виду
-class CartItem {
-    item
-    @observable current = 0
-    constructor(item) {
-        this.item = item;
-    }
-}
-
 class Cart {
     constructor(rootStore) {
         this.rootStore = rootStore
@@ -17,40 +7,41 @@ class Cart {
 
     @observable products = [];
 
-    @computed get total() {
-        return this.products.reduce((t, pr) => t + pr.item.price * pr.current, 0);
-    }
-
-    @action findProduct(item) {
-        return this.products.find(product => product.item === item);
-    }
-
-    @action add(item, cnt = 1) {
-        let product = this.findProduct(item);
-        if (!product) {
-            product = new CartItem(item);
-            this.products.push(product);
-        }
-        product.current += cnt;
-    }
-
-    @action change(i, cnt) {
-        this.products[i].current = cnt;
-    }
-
-    @computed get changeOn() {
-        return this.products.map((product, i) => {
-            return (cnt) => this.change(i, cnt);
+    @computed get productsDetailed() {
+        return this.products.map((pr) => {
+            let product = this.rootStore.shopModel.getById(pr.id);
+            return { ...product, cnt: pr.cnt };
         });
     }
 
-    @action countProductSubtotal(product) {
-        return product.item.price * product.current;
+    @computed get inCart() {
+        return (id) => this.products.some((product) => product.id === id);
+    }
+
+    @computed get total() {
+        return this.productsDetailed.reduce((t, pr) => {
+            return t + pr.price * pr.cnt;
+        }, 0);
+    }
+
+    @action add(id) {
+        this.products.push({ id, cnt: 1 });
+    }
+
+    @action change(id, cnt) {
+        let index = this.products.findIndex((pr) => pr.id === id);
+
+        if (index !== -1) {
+            this.products[index].cnt = cnt;
+        }
     }
 
     @action remove(id) {
-        const idx = this.products.findIndex(product => { return product.item.id == id })
-        this.products = [...this.products.splice(0, idx), ...this.products.splice(idx + 1)];
+        let index = this.products.findIndex((pr) => pr.id === id);
+
+        if (index !== -1) {
+            this.products.splice(index, 1);
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import Cart from '~p/cart';
-import Shop from '~p/shop';
-import ShopFull from '~p/shop-full';
+import ShopList from '~p/shop/shop-list';
+import ShopFull from '~p/shop/shop-full';
 import Order from '~p/order';
 import Result from '~p/result-screen';
 import Page404 from '~p/not-found';
@@ -9,7 +9,7 @@ let routes = [
     {
         name: 'home',
         url: '/',
-        component: Shop,
+        component: ShopList,
         exact: true
     },
     {

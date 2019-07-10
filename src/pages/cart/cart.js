@@ -1,28 +1,31 @@
 import React, { Component } from 'react';
-import MinMaxInput from '~c/min-max-input';
+import MinMaxInput from '~c/inputs/min-max-input';
 import styles from './cart.module.css';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { routesMap } from '~/routes';
 import { Link } from 'react-router-dom';
+import withStore from '~/hocs/with-store';
 
-@inject('RootStore')
 @observer class Cart extends Component {
     render() {
-        const productsRows = this.props.RootStore.cartModel.products.map((product, i) => {
+        const cartModel = this.props.RootStore.cartModel;
+
+        const productsRows = cartModel.productsDetailed.map((product, i) => {
             return (
-                <tr key={product.item.id}>
-                    <td>{product.item.title}</td>
-                    <td>{product.item.price}</td>
+                <tr key={product.id}>
+                    <td>{product.title}</td>
+                    <td>{product.price}</td>
                     <td>
-                        <MinMaxInput min={1}
-                            max={product.item.rest}
-                            cnt={product.current}
-                            onChange={this.props.RootStore.cartModel.changeOn[i]}
+                        <MinMaxInput
+                            min={1}
+                            max={product.rest}
+                            cnt={product.cnt}
+                            onChange={(cnt) => cartModel.change(product.id, cnt)}
                         />
                     </td>
-                    <td>{this.props.RootStore.cartModel.countProductSubtotal(product)}</td>
+                    <td>{product.price * product.cnt}</td>
                     <td>
-                        <button className="btn btn-secondary" onClick={() => this.props.RootStore.cartModel.remove(product.item.id)}>
+                        <button className="btn btn-secondary" onClick={() => cartModel.remove(product.id)}>
                             Remove
                         </button>
                     </td>
@@ -47,7 +50,7 @@ import { Link } from 'react-router-dom';
                     </tbody>
                 </table>
                 <div>
-                    <strong className={styles.total}>Total: {this.props.RootStore.cartModel.total}$</strong>
+                    <strong className={styles.total}>Total: {cartModel.total}$</strong>
                 </div>
                 <Link to={routesMap.order} className="btn btn-primary">
                     Send
@@ -57,4 +60,4 @@ import { Link } from 'react-router-dom';
     }
 }
 
-export default Cart;
+export default withStore(Cart);

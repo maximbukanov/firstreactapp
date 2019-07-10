@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import routes from '~/routes';
 import AppMainMenu from '~c/app-main-menu';
 
-import RootStore from '~s/root-store';
+import RootStore from '~s';
 
 @observer class App extends React.Component {
     render() {
@@ -17,7 +17,7 @@ import RootStore from '~s/root-store';
             />;
         });
         return (
-            <Provider RootStore={new RootStore()}>
+            <Provider RootStore={RootStore}>
                 <Router>
                     <AppMainMenu />
                     <Switch>

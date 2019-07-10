@@ -4,12 +4,27 @@ class Shop {
     constructor(rootStore) {
         this.rootStore = rootStore
     }
-    @observable products = getProducts()
-    @computed get isInCart() {
-        return (item) => this.rootStore.cartModel.findProduct(item);
+
+    @observable items = getProducts()
+
+    @computed get productsMap() {
+        let map = {};
+
+        this.items.forEach((pr, i) => {
+            map[pr.id.toString()] = i;
+        });
+
+        return map;
     }
-    @action findProductById(id) {
-        return this.products.find(product => product.id == id);
+
+    getById(id) {
+        let index = this.productsMap[id];
+
+        if (index === undefined) {
+            return null;
+        }
+
+        return this.items[index];
     }
 }
 

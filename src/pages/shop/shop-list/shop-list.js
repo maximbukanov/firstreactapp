@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
-import ShopItem from '~c/shop-item';
+import ShopItem from '~c/shop/shop-item';
+import withStore from '~/hocs/with-store';
 
-@inject('RootStore')
-@observer class Shop extends Component {
+@observer class ShopList extends Component {
     render() {
-        const productsList = this.props.RootStore.shopModel.products.map((item) => {
+        const shopModel = this.props.RootStore.shopModel;
+        const productsList = shopModel.items.map((item) => {
             return (
                 <div key={item.id} className="col-lg-4 col-md-6 mb-4">
                     <div className="card h-100">
@@ -26,4 +27,4 @@ import ShopItem from '~c/shop-item';
     }
 }
 
-export default Shop;
+export default withStore(ShopList);

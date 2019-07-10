@@ -1,6 +1,10 @@
 import { observable, computed, action, values } from 'mobx';
 
 class PersonalData {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+    }
+
     @observable personalData = getPersonalData();
 
     @computed get personalDataIsInvalid() {
