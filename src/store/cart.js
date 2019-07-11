@@ -24,6 +24,10 @@ class Cart {
         }, 0);
     }
 
+    @computed get getItemsCnt() {
+        return this.products.length;
+    }
+
     @action add(id) {
         this.products.push({ id, cnt: 1 });
     }

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { routesMap } from '~/routes';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
+import Cart from '~c/cart';
 
 @observer class AppMainMenu extends Component {
     render() {
         const appMainMenuButtons = [
             { route: routesMap.home, label: 'Home' },
-            { route: routesMap.cart, label: 'Cart' },
             { route: routesMap.order, label: 'Order' }
         ].map((item, i) => {
-            return (<Link key={i} className="nav-link" role="button" href="#" to={item.route}>{item.label}</Link>);
+            return (<NavLink key={i} className="nav-link" activeClassName="active" role="button" href="#" to={item.route} exact>{item.label}</NavLink>);
         });
         return (
             <Navbar bg="dark" variant="dark" className="mb-4">
@@ -19,6 +19,7 @@ import { Navbar, Nav } from 'react-bootstrap';
                 <Nav className="mr-auto">
                     {appMainMenuButtons}
                 </Nav>
+                <Cart />
             </Navbar>
         );
     }

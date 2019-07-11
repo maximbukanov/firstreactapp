@@ -13,7 +13,7 @@ class PersonalData {
         const result = values(this.personalData).filter(({ ...item }) => {
             return item.hasErrors === true || item.value.toString() === "";
         });
-        return result.length > 0 ? "disabled" : false;
+        return result.length > 0;
     }
 
     @action change(name, value) {

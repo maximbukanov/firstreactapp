@@ -1,14 +1,18 @@
-.btnLeft__c744d81 {
+.btnLeft__5ede90b {
     border-radius: .25rem 0 0 .25rem !important;    
 }
 
-.btnRight__f1806ec {
+.btnRight__bea2fc8 {
     border-radius: 0 .25rem .25rem 0 !important;    
 }
 .total__657cc6a {
     display: block;
     font-size: 3rem;
     margin-bottom: 1rem;
+}
+.cart__modal__e441d4c {
+    max-width: 600px !important; 
+    top: 20%;
 }
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)

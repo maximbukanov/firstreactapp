@@ -29,6 +29,8 @@ import withStore from '~/hocs/with-store';
 
         const personalDataModel = this.props.RootStore.personalDataModel;
 
+        const canBeOrdered = personalDataModel.personalDataIsInvalid === true || cartModel.getItemsCnt === 0;
+
         const formFields = [];
 
         for (let name in personalDataModel.personalData) {
@@ -59,11 +61,13 @@ import withStore from '~/hocs/with-store';
                 <Form>
                     {formFields}
                 </Form>
-                <Link to={routesMap.cart} className="btn btn-secondary">
-                    Back
+                <Link to={routesMap.home} className="btn btn-secondary">
+                    Back to home
                 </Link>
                 &nbsp;
-                <Button variant="primary" onClick={() => this.show()} disabled={personalDataModel.personalDataIsInvalid}>
+                <Button variant="primary"
+                    onClick={() => this.show()}
+                    disabled={canBeOrdered}>
                     Order
                 </Button>
                 <Modal show={this.state.showModal} backdrop="static">
