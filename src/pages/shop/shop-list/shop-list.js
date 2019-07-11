@@ -20,7 +20,11 @@ import withStore from '~/hocs/with-store';
         return (
             <>
                 <div className="row">
-                    {productsList}
+                    {
+                        shopModel.isLoading ?
+                            <div className='col'>Loading...</div> :
+                            productsList
+                    }
                 </div>
             </>
         );

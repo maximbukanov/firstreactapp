@@ -3,9 +3,46 @@ import { observable, computed, action } from 'mobx';
 class Shop {
     constructor(rootStore) {
         this.rootStore = rootStore
+        //todo: setInterval, чтобы обновлять товары "на лету"?
+        setTimeout(this.loadProducts, 400)
     }
 
-    @observable items = getProducts()
+    @observable items = []
+
+    @observable isLoading = true
+
+    //без bound экшен не работает. Нужно сделать loadProducts стрелочной функцией?
+    @action.bound loadProducts() {
+        fetch("/shop.json").then(response => {
+            return response.json();
+        }).then(json => {
+            this.setProducts(JSON.parse(JSON.stringify(json)));
+            this.isLoading = false;
+        }).catch(err => {
+            console.error("Unable to get products: ", err);
+        });
+    }
+
+    @action addProduct(item) {
+        if (!this.getById(item.id)) {
+            this.items.push(item);
+        } else {
+            /**
+             * todo: this.replaceItem(item)
+             * (если по setInterval с бэкэнда пришли два товара с одинаковыми id, 
+             * хотя это маловероятно)
+            */
+        }
+    }
+
+    @action setProducts(products) {
+        //Можно ли было здесь обойтись простым присвоением полученного из fetch массива?
+        if (products.length) {
+            products.forEach(item => {
+                this.addProduct(item);
+            });
+        }
+    }
 
     @computed get productsMap() {
         let map = {};
@@ -26,39 +63,6 @@ class Shop {
 
         return this.items[index];
     }
-}
-
-function getProducts() {
-    return [
-        {
-            id: 100,
-            title: 'Ipnone 200',
-            description: 'Ipnone 200 description',
-            price: 12000,
-            rest: 10
-        },
-        {
-            id: 101,
-            title: 'Samsung AAZ8',
-            description: 'Samsung AAZ8 description',
-            price: 22000,
-            rest: 5
-        },
-        {
-            id: 103,
-            title: 'Nokia 3310',
-            description: 'Nokia 3310 description',
-            price: 5000,
-            rest: 2
-        },
-        {
-            id: 105,
-            title: 'Huawei ZZ',
-            description: 'Huawei ZZ description',
-            price: 15000,
-            rest: 8
-        }
-    ];
 }
 
 export default Shop;

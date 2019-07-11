@@ -47,6 +47,12 @@ class Cart {
             this.products.splice(index, 1);
         }
     }
+
+    @action clear() {
+        this.productsDetailed.map((item, i) => {
+            this.remove(item.id);
+        });
+    }
 }
 
 export default Cart;

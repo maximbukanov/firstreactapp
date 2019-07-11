@@ -7,9 +7,7 @@ import { withRouter } from 'react-router-dom';
 @observer class ResultScreen extends Component {
     flushAndReturn = () => {
         const cartModel = this.props.RootStore.cartModel;
-        cartModel.productsDetailed.map((item, i) => {
-            cartModel.remove(item.id);
-        });
+        cartModel.clear();
         this.props.history.push(routesMap.home);
     }
     render() {

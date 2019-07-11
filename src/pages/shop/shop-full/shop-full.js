@@ -13,17 +13,24 @@ import withStore from '~/hocs/with-store';
         const productId = this.props.match.params.id;
         const item = shopModel.getById(productId);
         return (
-            <div>
-                <h1>{item.title}</h1>
-                <p>{item.description}</p>
-                <h4>{item.price}$</h4>
-                <h5>Rest: {item.rest}</h5>
-                <p className="card-text">{item.description}</p>
-                <ShopItemControls isInCart={cartModel.inCart(item.id)}
-                    add={() => cartModel.add(item.id)}
-                    remove={() => cartModel.remove(item.id)} />
-                <Link to={routesMap.home} className="btn btn-secondary">Back</Link>
-            </div >
+            <>
+                {
+                    shopModel.isLoading ?
+                        'Loading...' :
+                        <div>
+                            <h1>{item.title}</h1>
+                            <p>{item.description}</p>
+                            <h4>{item.price}$</h4>
+                            <h5>Rest: {item.rest}</h5>
+                            <p className="card-text">{item.description}</p>
+                            <ShopItemControls isInCart={cartModel.inCart(item.id)}
+                                add={() => cartModel.add(item.id)}
+                                remove={() => cartModel.remove(item.id)} />
+                            <Link to={routesMap.home} className="btn btn-secondary">Back</Link>
+                        </div>
+                }
+            </>
+
         );
     }
 }
