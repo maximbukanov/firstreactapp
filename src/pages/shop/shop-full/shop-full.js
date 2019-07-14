@@ -1,37 +1,23 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import { Link } from 'react-router-dom';
-import { routesMap } from '~/routes';
-import ShopItemControls from '~c/shop/shop-item-controls';
+import { observer } from 'mobx-react';
+import ShopItemFull from '~c/shop/shop-item-full';
 import withStore from '~/hocs/with-store';
 
 @observer class ShopFull extends Component {
+    inCart = (id) => {
+        return this.props.RootStore.cartStore.inCart(id);
+    }
+    add = (id) => {
+        return this.props.RootStore.cartStore.add(id);
+    }
+    remove = (id) => {
+        return this.props.RootStore.cartStore.remove(id);
+    }
     render() {
-        const shopModel = this.props.RootStore.shopModel;
-        const cartModel = this.props.RootStore.cartModel;
-
+        const shopStore = this.props.RootStore.shopStore;
         const productId = this.props.match.params.id;
-        const item = shopModel.getById(productId);
-        return (
-            <>
-                {
-                    shopModel.isLoading ?
-                        'Loading...' :
-                        <div>
-                            <h1>{item.title}</h1>
-                            <p>{item.description}</p>
-                            <h4>{item.price}$</h4>
-                            <h5>Rest: {item.rest}</h5>
-                            <p className="card-text">{item.description}</p>
-                            <ShopItemControls isInCart={cartModel.inCart(item.id)}
-                                add={() => cartModel.add(item.id)}
-                                remove={() => cartModel.remove(item.id)} />
-                            <Link to={routesMap.home} className="btn btn-secondary">Back</Link>
-                        </div>
-                }
-            </>
-
-        );
+        const item = shopStore.getById(productId);
+        return <ShopItemFull item={item} inCart={this.inCart} add={this.add} remove={this.remove} />;
     }
 }
 export default withStore(ShopFull);

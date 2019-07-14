@@ -1,32 +1,28 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
-import ShopItem from '~c/shop/shop-item';
+import { observer } from 'mobx-react';
+import ShopItems from '~c/shop/shop-items';
 import withStore from '~/hocs/with-store';
 
 @observer class ShopList extends Component {
+    inCart = (id) => {
+        return this.props.RootStore.cartStore.inCart(id);
+    }
+    add = (id) => {
+        return this.props.RootStore.cartStore.add(id);
+    }
+    remove = (id) => {
+        return this.props.RootStore.cartStore.remove(id);
+    }
     render() {
-        const shopModel = this.props.RootStore.shopModel;
-        const productsList = shopModel.items.map((item) => {
-            return (
-                <div key={item.id} className="col-lg-4 col-md-6 mb-4">
-                    <div className="card h-100">
-                        <div className="card-body">
-                            <ShopItem item={item} />
-                        </div>
-                    </div>
-                </div>
-            );
-        });
+        const shopStore = this.props.RootStore.shopStore;
+        const shopItemsList = shopStore.items;
         return (
-            <>
-                <div className="row">
-                    {
-                        shopModel.isLoading ?
-                            <div className='col'>Loading...</div> :
-                            productsList
-                    }
-                </div>
-            </>
+            <ShopItems
+                shopItemsList={shopItemsList}
+                inCart={this.inCart}
+                add={this.add}
+                remove={this.remove}
+            />
         );
     }
 }

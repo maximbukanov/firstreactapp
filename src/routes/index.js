@@ -12,12 +12,12 @@ let routes = [
         component: ShopList,
         exact: true
     },
-    // {
-    //     name: 'cart',
-    //     url: '/cart',
-    //     component: Cart,
-    //     exact: true
-    // },
+    {
+        name: 'cart',
+        url: '/cart',
+        component: Cart,
+        exact: true
+    },
     {
         name: 'shopFull',
         url: '/shop/:id',

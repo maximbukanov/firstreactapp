@@ -1,13 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
+import withStore from '~/hocs/with-store';
 
-class ShopItemControls extends Component {
-    render() {
-        return (
-            this.props.isInCart ?
-                <button className="btn btn-danger" onClick={this.props.remove}>Remove from cart</button> :
-                <button className="btn btn-success" onClick={this.props.add}>Add to cart</button>
-        );
-    }
+function shopItemControls(props) {
+    console.log('todo: shopItemControls: propTypes / remove');
+    console.log('todo: shopItemControls: propTypes / add');
+    console.log('todo: shopItemControls: propTypes / isInCart');
+    console.log('todo: shopItemControls: propTypes / item');
+    return (
+        props.inCart(props.item.id) ?
+            <button className="btn btn-danger" onClick={() => props.remove(props.item.id)}>Remove from cart</button> :
+            <button className="btn btn-success" onClick={() => props.add(props.item.id)}>Add to cart</button>
+    );
 }
 
-export default ShopItemControls;
+export default withStore(shopItemControls);
