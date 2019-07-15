@@ -25,7 +25,9 @@ class Cart {
     }
 
     @computed get getItemsCnt() {
-        return this.products.length;
+        return this.products.reduce((cnt, pr) => {
+            return cnt + pr.cnt;
+        }, 0);
     }
 
     @action add(id) {
