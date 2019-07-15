@@ -1,8 +1,8 @@
 import React from 'react';
-import E404 from '~c/errors/not-found';
+import E404View from '~c/errors/not-found';
 
 export default function () {
     return (
-        <E404 />
+        <E404View />
     );
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Navbar } from 'react-bootstrap';
 import AppNav from '~c/app/app-nav';
+import { observer } from 'mobx-react';
 import AppCart from '~c/app/app-cart';
+import PropTypes from 'prop-types';
 
-export default function appNavbar(props) {
-    console.log('todo: appNavbar: propTypes / appMainMenuLinks');
-    console.log('todo: appNavbar: propTypes / appCartCnt');
+const appNavbar = (props) => {
     return (
         <>
             <Navbar bg="dark" variant="dark" className="mb-4">
@@ -15,4 +15,11 @@ export default function appNavbar(props) {
             </Navbar>
         </>
     );
+};
+
+appNavbar.propTypes = {
+    appMainMenuLinks: PropTypes.array.isRequired,
+    appCartCnt: PropTypes.number.isRequired
 }
+
+export default appNavbar;

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import routes, { routesMap } from '~/routes';
 import AppNavbar from '~c/app/app-navbar';
 import RootStore from '~s';
+import withStore from '~/hocs/with-store'
 
 @observer class App extends React.Component {
     render() {
@@ -16,25 +17,23 @@ import RootStore from '~s';
         });
         const appMainMenuLinks = [
             { route: routesMap.home, label: 'Home' },
+            { route: routesMap.cart, label: 'Cart' },
             { route: routesMap.order, label: 'Order' },
-            { route: routesMap.cart, label: 'Cart' }
         ];
         const appCartTotal = RootStore.cartStore.total;
         const appCartCnt = RootStore.cartStore.getItemsCnt;
         return (
-            <Provider RootStore={RootStore}>
-                <Router>
-                    <AppNavbar
-                        appMainMenuLinks={appMainMenuLinks}
-                        appCartTotal={appCartTotal}
-                        appCartCnt={appCartCnt} />
-                    <Switch>
-                        {routesComponents}
-                    </Switch>
-                </Router>
-            </Provider>
+            <Router>
+                <AppNavbar
+                    appMainMenuLinks={appMainMenuLinks}
+                    appCartTotal={appCartTotal}
+                    appCartCnt={appCartCnt} />
+                <Switch>
+                    {routesComponents}
+                </Switch>
+            </Router>
         )
     }
 }
 
-export default App;
+export default withStore(App);

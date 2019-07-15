@@ -1,16 +1,21 @@
 import React from 'react';
-import withStore from '~/hocs/with-store';
+import { observer } from 'mobx-react';
+import PropTypes from 'prop-types';
 
-function shopItemControls(props) {
-    console.log('todo: shopItemControls: propTypes / remove');
-    console.log('todo: shopItemControls: propTypes / add');
-    console.log('todo: shopItemControls: propTypes / isInCart');
-    console.log('todo: shopItemControls: propTypes / item');
+const shopItemControls = observer((props) => {
+    const { item: { id }, inCart, remove, add } = props;
     return (
-        props.inCart(props.item.id) ?
-            <button className="btn btn-danger" onClick={() => props.remove(props.item.id)}>Remove from cart</button> :
-            <button className="btn btn-success" onClick={() => props.add(props.item.id)}>Add to cart</button>
+        inCart(id) ?
+            <button className="btn btn-danger" onClick={() => remove(id)}>Remove from cart</button> :
+            <button className="btn btn-success" onClick={() => add(id)}>Add to cart</button>
     );
-}
+});
 
-export default withStore(shopItemControls);
+shopItemControls.propTypes = {
+    remove: PropTypes.func.isRequired,
+    add: PropTypes.func.isRequired,
+    inCart: PropTypes.func.isRequired,
+    item: PropTypes.object.isRequired
+};
+
+export default shopItemControls;

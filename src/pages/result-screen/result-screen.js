@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import withStore from '~/hocs/with-store';
 import { routesMap } from '~/routes';
 import { withRouter } from 'react-router-dom';
+import ResultScreenView from '~c/result-screen';
 
 @observer class ResultScreen extends Component {
-    flushAndReturn = () => {
+    flushAndGoBack = () => {
         const cartStore = this.props.RootStore.cartStore;
         cartStore.clear();
         this.props.history.push(routesMap.home);
     }
     render() {
-        const cartStore = this.props.RootStore.cartStore;
-        const personalData = this.props.RootStore.personalDataStore.personalData;
-        const name = { ...personalData.name };
+        const { cartStore, personalDataStore } = this.props.RootStore;
+        const { name } = personalDataStore.personalData;
         const total = cartStore.total;
         return (
-            <>
-                <div>
-                    <h2>Congratulations, {name.value}!</h2>
-                    <p>Your order in {total}$ has been recieved!</p>
-                    <button className="btn btn-warning" onClick={this.flushAndReturn}>Clear the cart & back to home</button>
-                </div>
-            </>
+            <ResultScreenView
+                name={name.value}
+                total={total}
+                flushAndGoBack={this.flushAndGoBack}
+            />
         );
     }
 }

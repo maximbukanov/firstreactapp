@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import ShopItemFull from '~c/shop/shop-item-full';
+import ShopItemFullView from '~c/shop/shop-item-full';
 import withStore from '~/hocs/with-store';
 
 @observer class ShopFull extends Component {
-    inCart = (id) => {
-        return this.props.RootStore.cartStore.inCart(id);
-    }
-    add = (id) => {
-        return this.props.RootStore.cartStore.add(id);
-    }
-    remove = (id) => {
-        return this.props.RootStore.cartStore.remove(id);
-    }
     render() {
-        const shopStore = this.props.RootStore.shopStore;
-        const productId = this.props.match.params.id;
+        const { shopStore, cartStore } = this.props.RootStore;
+        const productId = new Number(this.props.match.params.id).valueOf();
         const item = shopStore.getById(productId);
-        return <ShopItemFull item={item} inCart={this.inCart} add={this.add} remove={this.remove} />;
+        return <ShopItemFullView
+            item={item}
+            inCart={(id) => cartStore.inCart(id)}
+            add={(id) => cartStore.add(id)}
+            remove={(id) => cartStore.remove(id)}
+        />;
     }
 }
 export default withStore(ShopFull);

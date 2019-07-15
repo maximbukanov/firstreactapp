@@ -2,7 +2,7 @@ import React from 'react';
 import { routesMap } from '~/routes';
 import { Link } from 'react-router-dom';
 
-export default function () {
+export default function notFound() {
     return (
         <>
             <h1>Error 404, page not found</h1>
