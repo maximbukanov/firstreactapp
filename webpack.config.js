@@ -74,7 +74,15 @@ let conf = {
         }
     },
     devServer: {
-        historyApiFallback: true
+        historyApiFallback: true,
+        overlay: true,
+        proxy: {
+            '/reactcourseapi/**': {
+                target: 'http://faceprog.ru',
+                secure: false,
+                changeOrigin: true
+            }
+        }
     }
 };
 

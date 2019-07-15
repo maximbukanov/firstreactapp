@@ -25,6 +25,13 @@ class PersonalData {
             input.hasErrors = !test;
         }
     }
+
+    @action clear() {
+        const personalData = this.personalData;
+        for (let propName in personalData) {
+            personalData[propName].value = '';
+        }
+    }
 }
 
 function getPersonalData() {

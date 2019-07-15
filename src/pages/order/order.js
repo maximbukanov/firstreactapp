@@ -19,6 +19,7 @@ import withStore from '~/hocs/with-store';
 
     confirm = () => {
         this.hide();
+        this.props.RootStore.orderStore.cache();
         this.props.history.push(routesMap.result);
     }
 

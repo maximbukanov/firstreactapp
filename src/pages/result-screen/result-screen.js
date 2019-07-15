@@ -6,20 +6,18 @@ import { withRouter } from 'react-router-dom';
 import ResultScreenView from '~c/result-screen';
 
 @observer class ResultScreen extends Component {
-    flushAndGoBack = () => {
-        const cartStore = this.props.RootStore.cartStore;
-        cartStore.clear();
+    back = () => {
         this.props.history.push(routesMap.home);
     }
     render() {
-        const { cartStore, personalDataStore } = this.props.RootStore;
-        const { name } = personalDataStore.personalData;
-        const total = cartStore.total;
+        const { orderStore } = this.props.RootStore;
+        const name = orderStore.cached.name;
+        const total = orderStore.cached.total;
         return (
             <ResultScreenView
-                name={name.value}
+                name={name}
                 total={total}
-                flushAndGoBack={this.flushAndGoBack}
+                back={() => this.back()}
             />
         );
     }
